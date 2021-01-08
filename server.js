@@ -122,11 +122,15 @@ app.get("/profile", auth.isLoggedIn, async (req, res) => {
 });
 
 app.get('/update', auth.isLoggedIn, (req, res) => {
-    res.render('update')
+    const userDB = req.userFound;
+    res.render('update', {
+        user:userDB
+    })
 })
 
 app.post('/update', auth.isLoggedIn, async (req, res) => {
     const {userName, userEmail,} = req.body
+    const userDB = req.userFound;
     
     await User.findByIdAndUpdate( req.userFound._id, {
         name: userName,
@@ -134,7 +138,8 @@ app.post('/update', auth.isLoggedIn, async (req, res) => {
 
     });
     res.render("update", {
-        message: "details updated"
+        message: "details updated",
+        user:userDB
     })
 })
 
@@ -192,12 +197,76 @@ app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
     // shows all posts from everyone
     
     const allPosts = await Blogpost.find({user: req.userFound._id}).populate('user', 'name'); 
-    console.log(allPosts)
+    
+    
+        for(let i =0; i < allPosts.length; i++) {
+            // console.log(allPosts[i].createdAt)
+            
+            const d = {
+                day: allPosts[i].createdAt
+            }
+            const year = d.day.getFullYear() 
+            const date = d.day.getDate()
+            const months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+              ]
+            const monthIndex = d.day.getMonth()
+            const monthName = months[monthIndex]
+           
+            const days = [
+                'Sun',
+                'Mon',
+                'Tue',
+                'Wed',
+                'Thu',
+                'Fri',
+                'Sat'
+              ]
+              const dayName = days[d.day.getDay()] 
+              let formatted = `${dayName}, ${date} ${monthName} ${year}`
+            console.log(formatted)
+
+            allPosts[i].createdAt = formatted
+            console.log(allPosts[i].createdAt)
+        }
 
     res.render("userBlogPosts", {
         allPosts
     });
 });
+
+app.get("/editPost", auth.isLoggedIn, async (req, res) => {
+    res.render("editPost", {
+        
+    })
+})
+
+app.post("/editPost", auth.isLoggedIn, async (req, res) => {
+    
+})
+
+app.get("/logout", auth.isLoggedIn, (req, res) => {
+    res.render("logout")
+})
+
+app.post("/logout", auth.logout, (req, res) => {
+
+
+    res.render("logout", {
+        message: "you are logged out"
+    })
+})
 
 app.get('*', (req, res) => {
     res.send("Not sure where you were heading but pretty sure this isn't it.")

@@ -9,11 +9,11 @@
     <h1>Update your details</h1>
     
     <form action="/update" method="POST">
-        <h3>Name:{{user.name}}</h3><br />
-        <input type="text" name="userName"/><br />
+        <h3>Name:</h3><br />
+        <input type="text" name="userName" value="{{user.name}}"/><br />
 
-        <h3>Email:{{user.email}}</h3><br />
-        <input type="email" name="userEmail"/><br />
+        <h3>Email:</h3><br />
+        <input type="email" name="userEmail" value="{{user.email}}"/><br />
 
         <button type="submit">Update</button>
     </form>
