@@ -143,7 +143,7 @@ app.get('/password', auth.isLoggedIn, (req, res) => {
 
 app.post('/password', auth.isLoggedIn, async (req, res) => {
     const {userPassword, userNewPassword, userConfirmNewPassword} = req.body
-    const isMatch = await bcrypt.compare(req.body.userPassword, User.password)
+    const isMatch = await bcrypt.compare(userPassword, req.userFound.password)
 
     if(isMatch){
         if(userNewPassword != userConfirmNewPassword){
@@ -151,9 +151,10 @@ app.post('/password', auth.isLoggedIn, async (req, res) => {
                 message: "Those new passwords don't quite match"
             })
         }else{
-            await User.findByIdAndUpdate( req.userFound._id),{
-                password: userNewPassword
-            }
+            const hashedpassword = await bcrypt.hash(userNewPassword, 13)
+            await User.findByIdAndUpdate( req.userFound._id,{
+                password: hashedpassword
+            })
             res.render('password', {
                 message: "password updated"
             })
