@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <h3>Name:{{user.name}}</h3>
+    <h3>Email:{{user.email}}</h3>
+
+    <form action="/delete">
+        <button type="submit">Delete user</button>
+    </form>
+
+        <form action="/update/">
+        <button type="submit">Update details</button>
+    </form>
+        <form action="/newBlog">
+        <button type="submit">Create new blogpost</button>
+    </form>
+        <form action="/allPosts">
+        <button type="submit">See all your blog posts</button>
+    </form>
+    {{message}}
+</body>
+</html>

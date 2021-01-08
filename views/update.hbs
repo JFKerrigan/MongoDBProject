@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Update your details</h1>
+    
+    <form action="/update" method="POST">
+        <h3>Name:{{user.name}}</h3><br />
+        <input type="text" name="userName"/><br />
+
+        <h3>Email:{{user.email}}</h3><br />
+        <input type="email" name="userEmail"/><br />
+
+        <button type="submit">Update</button>
+    </form>
+
+    <form action="/password"  method="POST">
+        <button type="submit">Click here to change your password</button>
+    </form>
+    {{message}}
+</body>
+</html>

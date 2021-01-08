@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Register</h1>
+
+    <form action="/register" method="POST">
+
+        <label>Name:</label><br />
+        <input required type="text" name="userName" placeholder="E.g. Joe Bloggs"/><br />
+
+        <label>Email:</label><br />
+        <input required type="email" name="userEmail" placeholder="E.g. Joe@Bloggs.com"/><br />
+
+        <label>Password:</label><br />
+        <input required type="password" name="userPassword" placeholder="E.g. JoeBloggs1"/><br /><br />
+
+        <label>Confirm Password:</label><br />
+        <input required type="password" name="userConfirmPassword" placeholder="E.g. JoeBloggs1"/><br /><br />
+
+        <button type="submit">Register</button>
+
+    </form>
+
+    <h3>{{message}}</h3>
+
+</body>
+</html>
