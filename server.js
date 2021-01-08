@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const User = require('./models/userModel');
 const auth = require('./middlewares/auth');
+const Blogpost = require('./models/blogpostModel');
 
 const app = express();
 dotenv.config( { path: './.env' } );
@@ -167,6 +168,36 @@ app.post('/password', auth.isLoggedIn, async (req, res) => {
     
 })
 
+app.get("/newPost", auth.isLoggedIn, (req, res) => {
+    res.render('newPost', {
+       id: req.params.id
+    });
+})
+
+app.post("/newPost", auth.isLoggedIn, async (req, res) => {
+    
+    
+    await Blogpost.create({
+        title: req.body.postTitle,
+        body: req.body.postBody,
+        user: req.userFound._id
+    }); 
+
+    res.send("Blog has been posted");
+})
+
+app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
+    // const allPosts = await Blogpost.find();
+    // console log(allPosts);
+    // shows all posts from everyone
+    
+    const allPosts = await Blogpost.find({user: req.userFound._id}).populate('user', 'name'); 
+    console.log(allPosts)
+
+    res.render("userBlogPosts", {
+        allPosts
+    });
+});
 
 app.get('*', (req, res) => {
     res.send("Not sure where you were heading but pretty sure this isn't it.")

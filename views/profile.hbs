@@ -11,16 +11,16 @@
     <h3>Email:{{user.email}}</h3>
 
     <form action="/delete">
-        <button type="submit">Delete user</button>
+        <button type="submit" method="GET">Delete user</button>
     </form>
 
-        <form action="/update/">
+        <form action="/update" method="GET">
         <button type="submit">Update details</button>
     </form>
-        <form action="/newBlog">
+        <form action="/newPost" method="GET">
         <button type="submit">Create new blogpost</button>
     </form>
-        <form action="/allPosts">
+        <form action="/userBlogPosts" method="GET">
         <button type="submit">See all your blog posts</button>
     </form>
     {{message}}
