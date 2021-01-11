@@ -173,6 +173,15 @@ app.post('/password', auth.isLoggedIn, async (req, res) => {
     
 })
 
+app.get('/delete', auth.isLoggedIn, async (req, res) => {
+    try{
+        await User.findByIdAndDelete(req.userFound._id);
+        res.send("User has been deleted");
+    } catch(error) {
+        res.send("That user does not exist");
+    };
+});
+
 app.get("/newPost", auth.isLoggedIn, (req, res) => {
     res.render('newPost', {
        id: req.params.id
@@ -195,18 +204,20 @@ app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
     // const allPosts = await Blogpost.find();
     // console log(allPosts);
     // shows all posts from everyone
-    
+    const name = await req.userFound.name;
     const allPosts = await Blogpost.find({user: req.userFound._id}).populate('user', 'name'); 
-    
-    
+    let d= []
+    console.log(allPosts.length)
         for(let i =0; i < allPosts.length; i++) {
             // console.log(allPosts[i].createdAt)
             
-            const d = {
-                day: allPosts[i].createdAt
-            }
-            const year = d.day.getFullYear() 
-            const date = d.day.getDate()
+            // const dates = {
+            //     day: allPosts[i].createdAt
+            // }
+
+            const dates= new Date(allPosts[i].createdAt)
+            const year = dates.getFullYear() 
+            const getDay = dates.getDate()
             const months = [
                 'January',
                 'February',
@@ -221,7 +232,7 @@ app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
                 'November',
                 'December'
               ]
-            const monthIndex = d.day.getMonth()
+            const monthIndex = dates.getMonth()
             const monthName = months[monthIndex]
            
             const days = [
@@ -233,27 +244,57 @@ app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
                 'Fri',
                 'Sat'
               ]
-              const dayName = days[d.day.getDay()] 
-              let formatted = `${dayName}, ${date} ${monthName} ${year}`
-            console.log(formatted)
-
-            allPosts[i].createdAt = formatted
-            console.log(allPosts[i].createdAt)
+            const dayName = days[dates.getDay()] 
+            let formatted = `${dayName}, ${getDay} ${monthName} ${year}`
+            // console.log(formatted)
+            d.push(
+                formatted
+            )
         }
+        console.log(d)
+        let myDate =[]
 
+        for(var i = 0; i < allPosts.length; ++i){
+            myDate.push({
+                blog: allPosts[i],
+                date: d[i]
+            });
+        }
     res.render("userBlogPosts", {
-        allPosts
+        // allPosts, 
+        name, 
+        myDate
     });
 });
 
-app.get("/editPost", auth.isLoggedIn, async (req, res) => {
+app.get("/editPost/:id", auth.isLoggedIn, async (req, res) => {
+    const editPost = await Blogpost.findById(req.params.id)
+    console.log(editPost)
     res.render("editPost", {
+        blogpost: editPost
+    })
+})
+
+app.post("/editPost/:id", auth.isLoggedIn, async (req, res) => {
+    const {postTitle, postBody,} = req.body
+    ;
+    
+    await Blogpost.findByIdAndUpdate( req.params.id, {
+        title: postTitle,
+        body: postBody
+
+    });
+    res.render("profile", {
+        message: "blog updated",
         
     })
 })
 
-app.post("/editPost", auth.isLoggedIn, async (req, res) => {
-    
+app.post("/delete/:id", auth.isLoggedIn, async (req, res) => {
+    await Blogpost.findByIdAndDelete(req.params.id);
+    res.render("profile",{
+        message: "blog post deleted"
+    })
 })
 
 app.get("/logout", auth.isLoggedIn, (req, res) => {

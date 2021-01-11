@@ -6,12 +6,19 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>User Blog Posts</h1>
+    <h1>{{this.name}} Blog Posts</h1>
 
-    {{#each allPosts}}
-        <h3>{{this.title}}</h3>
-        <p>{{this.body}}</p>
-        <p>{{this.createdAt}}</p>
-    {{/each}}
+    {{#myDate}}
+        <form action="/editPost/{{blog._id}}" method="GET">
+
+            <h3>{{blog.title}}</h3>
+            <p>{{blog.body}}</p>
+            
+            <p>{{date}}</p>
+            
+            <button type="submit" value="{{blog._id}}">Edit this post</button>
+
+        </form>
+    {{/myDate}}
 </body>
 </html>
