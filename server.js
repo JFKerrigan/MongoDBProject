@@ -101,16 +101,40 @@ app.post('/login', async (req, res) => {
         });
     }
 });
+app.get("/adminProfile", auth.isLoggedIn, async (req, res) => {
+    if(req.userFound.admin == true){
+        const userDB = req.userFound;
+        console.log(userDB);
+        res.render('adminProfile', {
+            user: userDB,
+        });
+    }else{
+        const userDB = req.userFound;
+        console.log(userDB);
+        res.render('profile', {
+            user: userDB
+        });
+    }
+})
 
 app.get("/profile", auth.isLoggedIn, async (req, res) => {
     try {
         if( req.userFound ) {
+            if(req.userFound.admin == true){
+                const userDB = (req.userFound);
+                console.log(userDB);
+                res.render('adminProfile', {
+                    user: userDB,
+                });
+            }else{
+                const userDB = req.userFound;
+                console.log(userDB);
+                res.render('profile', {
+                    user: userDB
+                });
+            }
             // const userDB = await User.findById(req.params.userId);
-            const userDB = req.userFound;
-            console.log(userDB);
-            res.render('profile', {
-                user: userDB
-            });
+            
         } else {
             res.render("login",{
             message: "You are not logged in"});
@@ -141,6 +165,49 @@ app.post('/update', auth.isLoggedIn, async (req, res) => {
         message: "details updated",
         user:userDB
     })
+})
+
+app.get('/allUsersAdmin', auth.isLoggedIn, async (req, res) =>{
+    if(req.userFound.admin == true) {
+        const usersDB = await User.find();
+        console.log(usersDB)
+        res.render('allUsersAdmin', {
+            user: usersDB
+        });
+    }else{
+        res.send('You do not have the authorisation to access this information')
+    }
+})
+
+app.post('/adminEdit', auth.isLoggedIn, async (req, res) =>{
+    if(req.userFound.admin == true) {
+        const usersDB = await User.findById(req.body.id);
+        console.log(usersDB)
+        res.render('adminEdit', {
+            user: usersDB
+        });
+    }else{
+        res.send('You do not have the authorisation to access this information')
+    }
+})
+
+app.post('/adminEdit/:id', auth.isLoggedIn, async (req, res) =>{
+    
+    if(req.userFound.admin == true) {
+        
+        const adminEdit = await User.findByIdAndUpdate( req.params.id, {
+            name: req.body.userName,
+            email: req.body.userEmail
+        });
+        const usersDB = await User.find();
+        res.render("allUsersAdmin",{
+                message: "user updated",
+                user: adminEdit,
+                user: usersDB})
+        
+    }else{
+        res.send('You do not have the authorisation to access this information')
+    }
 })
 
 app.get('/password', auth.isLoggedIn, (req, res) => {
@@ -204,6 +271,7 @@ app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
     // const allPosts = await Blogpost.find();
     // console log(allPosts);
     // shows all posts from everyone
+    
     const name = await req.userFound.name;
     const allPosts = await Blogpost.find({user: req.userFound._id}).populate('user', 'name'); 
     let d= []
@@ -263,7 +331,8 @@ app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
     res.render("userBlogPosts", {
         // allPosts, 
         name, 
-        myDate
+        myDate,
+        
     });
 });
 
@@ -278,22 +347,23 @@ app.get("/editPost/:id", auth.isLoggedIn, async (req, res) => {
 app.post("/editPost/:id", auth.isLoggedIn, async (req, res) => {
     const {postTitle, postBody,} = req.body
     ;
-    
+    const userDB = req.userFound;
     await Blogpost.findByIdAndUpdate( req.params.id, {
         title: postTitle,
         body: postBody
 
     });
     res.render("profile", {
+        user:userDB,
         message: "blog updated",
-        
     })
 })
 
 app.post("/delete/:id", auth.isLoggedIn, async (req, res) => {
     await Blogpost.findByIdAndDelete(req.params.id);
+    const userDB = req.userFound;
     res.render("profile",{
-        message: "blog post deleted"
+        message: "blog post deleted",
     })
 })
 

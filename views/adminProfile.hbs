@@ -7,7 +7,7 @@
 </head>
 <body>
     
-        <h1>User Profile</h1>
+        <h1>Admin Profile</h1>
         <h3>Name:{{user.name}}</h3>
         <h3>Email:{{user.email}}</h3>
 
@@ -18,11 +18,20 @@
         <form action="/update" method="GET">
             <button type="submit">Update details</button>
         </form>
-            <form action="/newPost" method="GET">
+        <form action="/newPost" method="GET">
             <button type="submit">Create new blogpost</button>
         </form>
         <form action="/userBlogPosts" method="GET">
             <button type="submit">See all your blog posts</button>
+        </form>
+
+
+
+        <form action="/allUsersAdmin" method="GET">
+            <button type="submit">See all users</button>
+        </form>
+        <form action="/userBlogPostsAdmin" method="GET">
+            <button type="submit">See all blog posts</button>
         </form>
         {{message}}
     
