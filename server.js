@@ -89,7 +89,9 @@ app.post('/login', async (req, res) => {
                 httpOnly:true
             }
             res.cookie('jwt', token, cookieOptions);
-            res.send("You are logged in")
+            res.render("profile", {
+                user
+            })
         } else {
             const error = "login failed";
             res.send("details not recognised");
@@ -154,14 +156,15 @@ app.get('/update', auth.isLoggedIn, (req, res) => {
 
 app.post('/update', auth.isLoggedIn, async (req, res) => {
     const {userName, userEmail,} = req.body
-    const userDB = req.userFound;
+    
     
     await User.findByIdAndUpdate( req.userFound._id, {
         name: userName,
         email: userEmail
 
     });
-    res.render("update", {
+    const userDB = req.userFound;
+    res.render("profile", {
         message: "details updated",
         user:userDB
     })
@@ -257,14 +260,17 @@ app.get("/newPost", auth.isLoggedIn, (req, res) => {
 
 app.post("/newPost", auth.isLoggedIn, async (req, res) => {
     
-    
+    const userDB = req.userFound;
     await Blogpost.create({
         title: req.body.postTitle,
         body: req.body.postBody,
         user: req.userFound._id
     }); 
 
-    res.send("Blog has been posted");
+    res.render("profile", {
+        message: "Blog updated",
+        user: userDB
+    });
 })
 
 app.get("/userBlogPosts", auth.isLoggedIn, async (req, res) => {
@@ -374,7 +380,7 @@ app.get("/logout", auth.isLoggedIn, (req, res) => {
 app.post("/logout", auth.logout, (req, res) => {
 
 
-    res.render("logout", {
+    res.render("login", {
         message: "you are logged out"
     })
 })
